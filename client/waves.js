@@ -63,13 +63,11 @@ function updateVisual(new_reading){
 	    	var y1 = y;
 	    	var x2 = current_points[i-1][0] - adjustment_per_period;
 	    	var y2 = current_points[i-1][1];
-	    	console.log(x1,y1,x2,y2);
 	    	var l = intersection(x1,y1,x2,y2,0,0,0,16);
 	    	var r = intersection(x1,y1,x2,y2,canvas_width,0,canvas_width,16);
 	    	var t = intersection(x1,y1,x2,y2,0,0,16,0);
 	    	var b = intersection(x1,y1,x2,y2,0,canvas_height,16,canvas_height);
 	    	var edges = [l,r,t,b];
-	    	console.log(edges);
 	    	var winners = [];
 	    	for (var j = 0; j< 4; j++){
 	    		var x_c = edges[j][0];
@@ -78,7 +76,6 @@ function updateVisual(new_reading){
 	    			winners.push(edges[j])
 	    		}
 	    	}
-	    	console.log(winners);
 	    	context.beginPath();
 		    context.moveTo(winners[0][0], winners[0][1]);
 		    context.lineTo(winners[1][0], winners[1][1]);
