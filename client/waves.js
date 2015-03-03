@@ -27,6 +27,12 @@ function setup(){
 }
 $(setup);
 
+function intersection(x1,y1,x2,y2,x3,y3,x4,y4){
+	var x = ((x1*y2-y1*x2)*(x3-x4) - (x1-x2)*(x3*y4-y3*x4)) / ((x1-x2)*(y3-y4) - (y1-y2)*(x3-x4));
+	var y = ((x1*y2-y1*x2)*(y3-y4) - (y1-y2)*(x3*y4-y3*x4)) / ((x1-x2)*(y3-y4) - (y1-y2)*(x3-x4));
+	return [x,y];
+}
+
 function updateVisual(new_reading){
 	var x = canvas_width+1;
 	var portion = (new_reading-lowest_reading)/difference;
@@ -40,10 +46,11 @@ function updateVisual(new_reading){
 	context.clearRect( 0 , 0 , canvas.width, canvas.height );
 
 	var new_current_points = [];
+	var adjustment_per_period = 60;
 	for (var i = 0; i<current_points.length; i++){
 		var x = current_points[i][0];
 		var y = current_points[i][1];
-		var x = x -2;
+		var x = x - adjustment_per_period;
 		if (x-radius >= 0){
 			new_current_points.push([x,y]);
 		}
@@ -51,6 +58,33 @@ function updateVisual(new_reading){
 	    context.arc(x, y, radius, 0, 2 * Math.PI, false);
 	    context.fillStyle = "rgba(111, 227, 245, 0.1)";
 	    context.fill();
+	    if (i > 0){
+	    	var x1 = x;
+	    	var y1 = y;
+	    	var x2 = current_points[i-1][0] - adjustment_per_period;
+	    	var y2 = current_points[i-1][1];
+	    	console.log(x1,y1,x2,y2);
+	    	var l = intersection(x1,y1,x2,y2,0,0,0,16);
+	    	var r = intersection(x1,y1,x2,y2,canvas_width,0,canvas_width,16);
+	    	var t = intersection(x1,y1,x2,y2,0,0,16,0);
+	    	var b = intersection(x1,y1,x2,y2,0,canvas_height,16,canvas_height);
+	    	var edges = [l,r,t,b];
+	    	console.log(edges);
+	    	var winners = [];
+	    	for (var j = 0; j< 4; j++){
+	    		var x_c = edges[j][0];
+	    		var y_c = edges[j][1];
+	    		if (x_c > -1 && x_c < canvas_width+1 && y_c > -1 && y_c < canvas_height + 1){
+	    			winners.push(edges[j])
+	    		}
+	    	}
+	    	console.log(winners);
+	    	context.beginPath();
+		    context.moveTo(winners[0][0], winners[0][1]);
+		    context.lineTo(winners[1][0], winners[1][1]);
+	    	context.strokeStyle = "rgba(111, 227, 245, 0.1)";
+		    context.stroke();
+	    }
 	}
 	current_points = new_current_points;
 }
