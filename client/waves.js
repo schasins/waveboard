@@ -33,11 +33,43 @@ function intersection(x1,y1,x2,y2,x3,y3,x4,y4){
 	return [x,y];
 }
 
+var getColor = function() {
+    // TODO do something with data here
+
+    var r = 111, g = 227, b = 245, a = 1.0;
+    var target_r = r, target_g = g, target_b = b, target_a = a;
+    var rgba = 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+
+    function randint() {
+        return 125 + Math.floor(Math.random() * 125);
+    }
+    function expdecay(val, target) {
+        return Math.floor(val + (target - val)/50);
+    }
+
+    setInterval(function() {
+        target_r = randint();
+        target_g = randint();
+        target_b = randint();
+    }, 2000);
+    setInterval(function() {
+        r = expdecay(r, target_r);
+        g = expdecay(g, target_g);
+        b = expdecay(b, target_b);
+        rgba = 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+    }, 50);
+
+    return function(data) {
+        console.log('r', r, 'target_r', target_r);
+        return rgba;
+    }
+}();
+
 function updateVisual(new_reading){
 	var x = canvas_width+1;
 	var portion = (new_reading-lowest_reading)/difference;
 	var y = canvas_height*portion;
-	console.log(new_reading, portion);
+	//console.log(new_reading, portion);
 	var new_point = [x,y];
 	current_points.push(new_point);
 	var radius = 3;
@@ -56,7 +88,7 @@ function updateVisual(new_reading){
 		}
 		context.beginPath();
 	    context.arc(x, y, radius, 0, 2 * Math.PI, false);
-	    context.fillStyle = "rgba(111, 227, 245, 0.1)";
+	    context.fillStyle = getColor();
 	    context.fill();
 	    if (i > 0){
 	    	var x1 = x;
@@ -79,7 +111,7 @@ function updateVisual(new_reading){
 	    	context.beginPath();
 		    context.moveTo(winners[0][0], winners[0][1]);
 		    context.lineTo(winners[1][0], winners[1][1]);
-	    	context.strokeStyle = "rgba(111, 227, 245, 0.1)";
+            context.strokeStyle = getColor();
 		    context.stroke();
 	    }
 	}
