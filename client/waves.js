@@ -38,13 +38,20 @@ var getColor = function() {
 
     var r = 111, g = 227, b = 245, a = 1.0;
     var target_r = r, target_g = g, target_b = b, target_a = a;
-    var rgba = 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+    var rate = 10;
+    var rgba = set_rgba();
 
     function randint() {
         return 125 + Math.floor(Math.random() * 125);
     }
     function expdecay(val, target) {
-        return Math.floor(val + (target - val)/50);
+        return val + (target - val)/rate;
+    }
+    function set_rgba() {
+        rgba = 'rgba(' + Math.floor(r) + ','
+                       + Math.floor(g) + ','
+                       + Math.floor(b) + ','
+                       + a + ')';
     }
 
     setInterval(function() {
@@ -56,11 +63,10 @@ var getColor = function() {
         r = expdecay(r, target_r);
         g = expdecay(g, target_g);
         b = expdecay(b, target_b);
-        rgba = 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+        set_rgba();
     }, 50);
 
     return function(data) {
-        console.log('r', r, 'target_r', target_r);
         return rgba;
     }
 }();
