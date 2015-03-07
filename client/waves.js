@@ -22,6 +22,7 @@ function setup(){
 
 	var testing = true;
 	if (testing){
+        playSound(test_data_array);
 		test(0);
 	}
 }
@@ -123,6 +124,34 @@ function updateVisual(new_reading){
 	}
 	current_points = new_current_points;
 }
+
+var playSound = function(data) {
+    var dataIndex = 0;
+    var context = new AudioContext();
+    var dataNoise = context.createScriptProcessor(1024);
+    dataNoise.onaudioprocess = function(e) {
+        var leftIn = e.inputBuffer.getChannelData(0);
+        var rightIn = e.inputBuffer.getChannelData(1);
+        var leftOut = e.outputBuffer.getChannelData(0);
+        var rightOut = e.outputBuffer.getChannelData(1);
+        for (var i = 0; i < leftIn.length; i++) {
+            var shift = i + Math.floor(data[dataIndex] * 50);
+            if (shift < 0) shift = 0;
+            if (shift >= leftIn.length) shift = leftIn.length - 1;
+            leftOut[i] = leftIn[shift];
+            rightOut[i] = rightIn[shift];
+
+            dataIndex += 1;
+            if (dataIndex >= data.length) {
+                dataIndex = 0;
+            }
+        }
+    };
+    var source = context.createOscillator();
+    source.connect(dataNoise);
+    dataNoise.connect(context.destination);
+    source.start(0);
+};
 
 /*********************************************
 * Testing-specific code
