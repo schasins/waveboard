@@ -43,7 +43,7 @@ function intersection(x1,y1,x2,y2,x3,y3,x4,y4){
 var getColorFunc = function() {
     // TODO do something with data here
 
-    var r = 111, g = 227, b = 245, a = 1.0;
+    var r = 0, g = 227, b = 245, a = 1.0;
     var target_r = r, target_g = g, target_b = b, target_a = a;
     var rate = 10;
     var rgba = set_rgba();
@@ -55,19 +55,19 @@ var getColorFunc = function() {
         return val + (target - val)/rate;
     }
     function set_rgba() {
-        rgba = 'rgba(' + Math.floor(r) + ','
+        rgba = 'rgba(' + 0 + ','
                        + Math.floor(g) + ','
                        + Math.floor(b) + ','
                        + a + ')';
     }
 
     setInterval(function() {
-        target_r = randint();
+        target_r = 0;
         target_g = randint();
         target_b = randint();
     }, 2000);
     setInterval(function() {
-        r = expdecay(r, target_r);
+        r = 0;
         g = expdecay(g, target_g);
         b = expdecay(b, target_b);
         set_rgba();
