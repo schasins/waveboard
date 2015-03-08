@@ -27,7 +27,7 @@ function setup(){
         //console.log('test_data_arrays', test_data_arrays);
         var testing = true;
         if (testing){
-            //playSound(test_data_arrays[0]);
+            playSound(test_data_arrays[0]);
             test(0);
         }
     });
