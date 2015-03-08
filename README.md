@@ -1,16 +1,14 @@
 # waveboard
 Exploring interactions that augment the waveboard experience.
 
-to try it out:
+To try it out:
 
-( install nodejs and npm )
+Install nodejs and npm
 
-( download this repo )
+Download this repo
 
-navigate to the server folder
+In the server directory run: `npm install`
 
-`npm install`
+In the top level directory run: `node server/server.js`
 
-`node server.js`
-
-go to http://localhost:8000
+Direct your browser to: http://localhost:8000

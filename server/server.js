@@ -3,13 +3,11 @@ var path = require('path');
 var express = require('express');
 var socketio = require('socket.io');
 
-// loading fake data
-var test_data_array = null;
-fs.readFile('fake_data.txt', 'utf8', function(err, test_data) {
+var processFile = function(err, test_data) {
     if (err) {
         return console.log(err);
     }
-    test_data_array = test_data.split(" ");
+    var test_data_array = test_data.split(" ");
     var tmp = [];
     for (var i = 0; i< test_data_array.length; i++){
         var str = test_data_array[i];
@@ -21,18 +19,26 @@ fs.readFile('fake_data.txt', 'utf8', function(err, test_data) {
             tmp.push(parseFloat(test_data_array[i]));
         }
     }
-    test_data_array = tmp;
-});
+    test_data_arrays.push(tmp);
+}
+
+// loading fake data
+var test_data_arrays = [];
+fs.readFile('server/total_acc_x_truncated.txt', 'utf8', processFile);
+fs.readFile('server/total_acc_y_truncated.txt', 'utf8', processFile);
+fs.readFile('server/total_acc_z_truncated.txt', 'utf8', processFile);
 
 // starting servers
 var express_app = express();
-express_app.use(express.static(path.join(__dirname, 'client')));
+var p = path.join(__dirname, '../client');
+console.log("Serving: ",p);
+express_app.use(express.static(p));
 var express_server = express_app.listen(8000);
 var socketio_server = socketio.listen(express_server);
 
 socketio_server.on('connect', function(socket) {
     console.log('client connected');
-    socketio_server.emit('data', test_data_array);
+    socketio_server.emit('data', test_data_arrays);
     socket.on('disconnect', function() {
         console.log('client disconnected');
     });
