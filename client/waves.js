@@ -24,7 +24,7 @@ function setup(){
     var socket = io.connect('http://localhost:8000');
     socket.on('data', function(d) {
         test_data_arrays = d;
-        //console.log('test_data_arrays', test_data_arrays);
+        console.log('test_data_arrays', test_data_arrays);
         var testing = true;
         if (testing){
             playSound(test_data_arrays[0]);
@@ -162,8 +162,11 @@ var playSound = function(data) {
         }
     };
     var source = context.createOscillator();
+    var gain = context.createGain();
+    gain.gain.value = 0.3;
     source.connect(dataNoise);
-    dataNoise.connect(context.destination);
+    dataNoise.connect(gain);
+    gain.connect(context.destination);
     source.start(0);
 };
 

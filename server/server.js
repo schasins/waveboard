@@ -45,6 +45,7 @@ express_app.post('/data', function(req, res) {
         if (err) throw err;
         console.log('appended to data.txt');
     });
+    res.end("yes");
 });
 
 // starts the static file server and post requests handler
