@@ -4,7 +4,8 @@ function initialize() {
   var myLatlng = new google.maps.LatLng(37.8757151,-122.2590485);
   var mapOptions = {
     zoom: 18,
-    center: myLatlng
+    center: myLatlng,
+    styles: [{"stylers":[{"hue":"#00ffaa"},{"gamma":0.4}]}]
   }
   var div = document.getElementById('map-canvas');
   var $div = $(div);
