@@ -27,7 +27,7 @@ function setup(){
         console.log('test_data_arrays', test_data_arrays);
         var testing = true;
         if (testing){
-            playSound(test_data_arrays[0]);
+            playSound(test_data_arrays);
             test(0);
         }
     });
@@ -139,7 +139,8 @@ function updateVisual(new_readings){
     }
 }
 
-var playSound = function(data) {
+var playSound = function(xyz_data) {
+    var data = xyz_data[0];
     var dataIndex = 0;
     var context = new AudioContext();
     var dataNoise = context.createScriptProcessor(1024);
@@ -162,6 +163,7 @@ var playSound = function(data) {
         }
     };
     var source = context.createOscillator();
+    source.frequency.value = 400;
     var gain = context.createGain();
     gain.gain.value = 0.3;
     source.connect(dataNoise);
