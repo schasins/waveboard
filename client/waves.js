@@ -6,8 +6,8 @@ var most_recent_min = lowest_reading;
 var most_recent_max = highest_reading;
 var current_points = [[],[],[]];
 
-var canvas_height = $(window).height();;
-var canvas_width = $(window).width();;
+var canvas_height = $(window).height();
+var canvas_width = $(window).width();
 
 var canvas = document.createElement('canvas');
 canvas.id     = "c";
