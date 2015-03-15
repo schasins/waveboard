@@ -191,7 +191,7 @@ var playSound = function(xyz_data) {
     source.connect(dataNoise);
     dataNoise.connect(gain);
     gain.connect(context.destination);
-    //source.start(0);
+    source.start(0);
 };
 
 /*********************************************
