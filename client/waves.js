@@ -25,7 +25,7 @@ function setup(){
     socket.on('data', function(d) {
         test_data_arrays = d;
         console.log('test_data_arrays', test_data_arrays);
-        var testing = true;
+        var testing = false;
         if (testing){
             test(0);
             testSound(0);
