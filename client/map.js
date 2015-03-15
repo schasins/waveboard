@@ -1,0 +1,75 @@
+var map;
+
+function initialize() {
+  var myLatlng = new google.maps.LatLng(37.8757151,-122.2590485);
+  var mapOptions = {
+    zoom: 24,
+    center: myLatlng,
+    styles: [{"stylers":[{"hue":"#00ffaa"},{"gamma":0.4}]}]
+  }
+  var div = document.getElementById('map-canvas');
+  var $div = $(div);
+  $div.css("height", .5*$(window).height());
+  $div.css("width", .5*$(window).width());
+  $div.css("left", .25*$(window).width());
+  $div.css("top", .25*$(window).height());
+  map = new google.maps.Map(div, mapOptions);
+
+/*
+  var marker = new google.maps.Marker({
+      position: myLatlng,
+      icon:"images/4.png",
+      map: map
+  });
+*/
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
+var mostRecentPositions = [];
+var markers = [];
+
+function newPosition(lat,long) {
+  mostRecentPositions.push([lat,long]);
+  if (mostRecentPositions.length > 5){
+    mostRecentPositions = mostRecentPositions.slice(1,6);
+  }
+
+  //remove old markers
+  for (var i = 0; i<markers.length; i++){
+    markers[i].setMap(null);
+  }
+  markers = [];
+
+  //put on the new
+  for (var i = 0; i<mostRecentPositions.length; i++){
+    var la = mostRecentPositions[i][0];
+    var lo = mostRecentPositions[i][1];
+    var myLatlng = new google.maps.LatLng(la,lo);
+    var marker = new google.maps.Marker({
+        position: myLatlng,
+        icon: "images/"+i+".png",
+        map: map
+    });
+    markers.push(marker);
+    if (i === mostRecentPositions.length-1){
+      map.panTo(myLatlng);
+    }
+  }
+}
+
+var testFuncCounter = 0;
+var latlngs = [[37.8757151,-122.2590485],[37.8757151,-122.2591496],[37.8757151,-122.2592507],[37.8757151,-122.2593518],[37.8757151,-122.2594529],[37.8757151,-122.2595530],[37.8757151,-122.2596541],[37.8757151,-122.2597552]];
+function testFunc(){
+  newPosition(latlngs[testFuncCounter][0],latlngs[testFuncCounter][1]);
+
+  testFuncCounter += 1;
+  if (testFuncCounter>=latlngs.length){
+    return;
+  }
+  setTimeout(testFunc, 2000);
+}
+var test = false;
+if (test){
+  setTimeout(testFunc,3000);
+}

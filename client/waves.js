@@ -6,8 +6,8 @@ var most_recent_min = lowest_reading;
 var most_recent_max = highest_reading;
 var current_points = [[],[],[]];
 
-var canvas_height = $(window).height();;
-var canvas_width = $(window).width();;
+var canvas_height = $(window).height();
+var canvas_width = $(window).width();
 
 var canvas = document.createElement('canvas');
 canvas.id     = "c";
@@ -25,11 +25,20 @@ function setup(){
     socket.on('data', function(d) {
         test_data_arrays = d;
         console.log('test_data_arrays', test_data_arrays);
-        var testing = true;
+        var testing = false;
         if (testing){
             playSound(test_data_arrays);
             test(0);
         }
+    });
+
+    socket.on('acc', function(d) {
+        updateVisual(d); //[x,y,z]
+    });
+
+    socket.on('gps', function(d){
+        var ls = d.split(" ");
+        newPosition(parseFloat(ls[0]),parseFloat(ls[1]));
     });
 }
 $(setup);
