@@ -140,6 +140,19 @@ function updateVisual(new_readings){
 }
 
 var playSound = function(xyz_data) {
+
+    var ax = new this.complex_array.ComplexArray(xyz_data[0].length);
+    ax.map(function(value, i, n) {
+        //value.real = xyz_data[0][i];
+        value.real = Math.sin(2 * Math.PI * i * 0.0001);
+    });
+    ax.FFT();
+    var topten = _.sortBy(
+            _.map(ax.real, function(val, i) { return {i:i, val:val}; }),
+            function(o) { return Math.abs(o.val); })
+            .slice(-10);
+    console.log('topten', topten);
+
     var data = xyz_data[0];
     var dataIndex = 0;
     var context = new AudioContext();
@@ -169,7 +182,7 @@ var playSound = function(xyz_data) {
     source.connect(dataNoise);
     dataNoise.connect(gain);
     gain.connect(context.destination);
-    source.start(0);
+    //source.start(0);
 };
 
 /*********************************************
