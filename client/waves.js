@@ -25,10 +25,10 @@ function setup(){
     socket.on('data', function(d) {
         test_data_arrays = d;
         console.log('test_data_arrays', test_data_arrays);
-        var testing = false;
+        var testing = true;
         if (testing){
-            playSound(test_data_arrays);
             test(0);
+            testSound(0);
         }
     });
 
@@ -148,51 +148,56 @@ function updateVisual(new_readings){
     }
 }
 
-var playSound = function(xyz_data) {
+var updateSound = (function() {
+    console.log('initializing sounds');
+    var audioCtx = new AudioContext();
+    var osc1 = audioCtx.createOscillator();
+    osc1.frequency.value = 200;
+    var osc2 = audioCtx.createOscillator();
+    osc2.frequency.value = 200;
+    var gain = audioCtx.createGain();
 
-    var ax = new this.complex_array.ComplexArray(xyz_data[0].length);
-    ax.map(function(value, i, n) {
-        //value.real = xyz_data[0][i];
-        value.real = Math.sin(2 * Math.PI * i * 0.0001);
-    });
-    ax.FFT();
-    var topten = _.sortBy(
-            _.map(ax.real, function(val, i) { return {i:i, val:val}; }),
-            function(o) { return Math.abs(o.val); })
-            .slice(-10);
-    console.log('topten', topten);
+    osc1.connect(gain);
+    osc2.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc1.start(0);
+    osc2.start(0);
 
-    var data = xyz_data[0];
-    var dataIndex = 0;
-    var context = new AudioContext();
-    var dataNoise = context.createScriptProcessor(1024);
-    dataNoise.onaudioprocess = function(e) {
-        var leftIn = e.inputBuffer.getChannelData(0);
-        var rightIn = e.inputBuffer.getChannelData(1);
-        var leftOut = e.outputBuffer.getChannelData(0);
-        var rightOut = e.outputBuffer.getChannelData(1);
-        for (var i = 0; i < leftIn.length; i++) {
-            var shift = i + Math.floor(data[dataIndex] * 50);
-            if (shift < 0) shift = 0;
-            if (shift >= leftIn.length) shift = leftIn.length - 1;
-            leftOut[i] = leftIn[shift];
-            rightOut[i] = rightIn[shift];
+    gain.gain.setValueAtTime(0.0, audioCtx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.4, audioCtx.currentTime + 5.0);
 
-            dataIndex += 1;
-            if (dataIndex >= data.length) {
-                dataIndex = 0;
-            }
-        }
+    /* why does gain crackle? it's not linearly ramping at all!!!
+    function updateGain() {
+        var t = Math.floor(Math.random() * 15);
+        var g = Math.floor(Math.random()*100) / 100 + 0.01;
+        if ( g > 0.9 ) g = 0.9;
+        console.log('g', g, 't', t);
+        gain.gain.linearRampToValueAtTime(g, audioCtx.currentTime + t);
+        setTimeout(updateGain, 1000*t + 9000);
+    }
+    setTimeout(updateGain, 6000);
+    */
+
+    var beatFreq = 20;
+    return function(data) {
+        if (Math.random() < 0.5) return;
+
+        var x = data[0];
+        var y = data[1];
+        var z = data[2];
+        var f1 = Math.abs(x) * 200;
+
+        beatFreq = Math.random() * 5;
+        if (Math.random() > 0.7) beatFreq *= 2;
+        if (Math.random() > 0.85) beatFreq += 10;
+        var f2 = f1 + beatFreq;
+
+        console.log('f1', f1, 'f2', f2);
+        osc1.frequency.linearRampToValueAtTime(f1, audioCtx.currentTime + 3.0);
+        osc2.frequency.linearRampToValueAtTime(f2, audioCtx.currentTime + 3.0);
     };
-    var source = context.createOscillator();
-    source.frequency.value = 400;
-    var gain = context.createGain();
-    gain.gain.value = 0.3;
-    source.connect(dataNoise);
-    dataNoise.connect(gain);
-    gain.connect(context.destination);
-    source.start(0);
-};
+})();
+
 
 /*********************************************
 * Testing-specific code
@@ -206,3 +211,10 @@ function test(index){
 	setTimeout(function(){test(index+1);},10);
 }
 
+function testSound(index) {
+    var x = test_data_arrays[0][index];
+    var y = test_data_arrays[1][index];
+    var z = test_data_arrays[2][index];
+    updateSound([x,y,z]);
+	setTimeout(function(){testSound(index+1);},3000);
+}
