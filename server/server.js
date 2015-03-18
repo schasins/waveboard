@@ -50,10 +50,12 @@ socketio_server.on('connect', function(socket) {
     });
 });
 
+var counter = 0;
 // handle post requests of data from arduino
 express_app.use(bodyParser.urlencoded({ extended: false }));
 express_app.post('/data', function(req, res) {
-    console.log('got post with request body', req.body);
+    counter += 1;
+    console.log(counter+': got post with request body', req.body);
     var dict = req.body;
     if (dict.x){
         socketio_server.emit('acc', [parseFloat(dict.x),parseFloat(dict.y),parseFloat(dict.z)]);
@@ -62,7 +64,7 @@ express_app.post('/data', function(req, res) {
             console.log('appended to acc.txt');
         });  
     }
-    if (dict.gps){
+    if (dict.gps != "null"){
         socketio_server.emit('gps', dict.gps);
         fs.appendFile('server/gps.txt', dict.gps+'\n', function(err) {
             if (err) throw err;
