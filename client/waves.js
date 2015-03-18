@@ -38,6 +38,7 @@ function setup(){
     socket.on('acc', function(d) {
         if (!displayNewData){return;}
         updateVisual(d); //[x,y,z]
+        updateSound(d);
     });
 
     socket.on('gps', function(d){
