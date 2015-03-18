@@ -1,5 +1,5 @@
-var highest_reading = 3;
-var lowest_reading = -3;
+var highest_reading = 3.2;
+var lowest_reading = -3.2;
 var difference = highest_reading - lowest_reading;
 
 var most_recent_min = lowest_reading;
@@ -49,6 +49,7 @@ function setup(){
 
     socket.on('timeSinceReset', function(d){
         console.log(d);
+        console.log(d%60000);
     });
 }
 $(setup);
