@@ -62,8 +62,14 @@ function setup(){
             current_time_box.html(minutes);
             current_time_units.html("minutes");
         }
-        if (minutes > 30){
-            current_time.append($("<span></br>Getting very clingy...</span>"));
+        if (minutes > 30 && minutes <= 90){
+            current_time.append($("<span></br>Getting kinda clingy...</span>"));
+        }
+        else if (minutes > 90 && minutes <= 180){
+            current_time.append($("<span></br>Ok, seriously.  Getting very clingy.</span>"));
+        }
+        else if (minutes > 180){
+            current_time.append($("<span></br>This is too long.  I need to see other people.</span>"));
         }
     });
 }
