@@ -1,5 +1,5 @@
-var highest_reading = 1.5;
-var lowest_reading = -1.5;
+var highest_reading = 3;
+var lowest_reading = -3;
 var difference = highest_reading - lowest_reading;
 
 var most_recent_min = lowest_reading;
