@@ -46,6 +46,10 @@ function setup(){
         var ls = d.split(" ");
         newPosition(parseFloat(ls[0]),parseFloat(ls[1]));
     });
+
+    socket.on('timeSinceReset', function(d){
+        console.log(d);
+    });
 }
 $(setup);
 

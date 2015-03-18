@@ -53,11 +53,13 @@ socketio_server.on('connect', function(socket) {
 });
 
 var counter = 0;
+var last_reset = new Date();
 // handle post requests of data from arduino
 express_app.use(bodyParser.urlencoded({ extended: false }));
 express_app.post('/caught', function(req, res) {
     console.log('got caught post');
     BROADCAST = false;
+    last_reset = new Date();
     setTimeout(function() {
         BROADCAST = true;
     }, 3 * 1000 * 60); // 3 minutes (15 min is too long for testing/demo)
@@ -91,3 +93,9 @@ express_app.post('/data', function(req, res) {
     });
     res.end("yes");
 });
+
+function sendTimeSinceReset(){
+    socketio_server.emit('timeSinceReset', (new Date() - last_reset));
+    setTimeout(sendTimeSinceReset,60000);
+}
+sendTimeSinceReset();
