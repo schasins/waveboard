@@ -49,7 +49,22 @@ function setup(){
 
     socket.on('timeSinceReset', function(d){
         console.log(d);
-        console.log(d%60000);
+        var minutes = Math.floor(d/60000);
+        var current_time = $("#current_time");
+        current_time.css("display","block");
+        var current_time_box = $("#current_time_box");
+        var current_time_units = $("#current_time_units");
+        if (minutes > 60){
+            current_time_box.html(Math.floor(minutes/60));
+            current_time_units.html("hours");
+        }
+        else {
+            current_time_box.html(minutes);
+            current_time_units.html("minutes");
+        }
+        if (minutes > 30){
+            current_time.append($("<span></br>Getting very clingy...</span>"));
+        }
     });
 }
 $(setup);
@@ -203,7 +218,7 @@ var updateSound = (function() {
         if (Math.random() > 0.85) beatFreq += 10;
         var f2 = f1 + beatFreq;
 
-        console.log('f1', f1, 'f2', f2);
+        //console.log('f1', f1, 'f2', f2);
         osc1.frequency.linearRampToValueAtTime(f1, audioCtx.currentTime + 3.0);
         osc2.frequency.linearRampToValueAtTime(f2, audioCtx.currentTime + 3.0);
     };
