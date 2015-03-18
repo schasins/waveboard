@@ -1,5 +1,5 @@
-var highest_reading = 1.5;
-var lowest_reading = -1.5;
+var highest_reading = 3;
+var lowest_reading = -3;
 var difference = highest_reading - lowest_reading;
 
 var most_recent_min = lowest_reading;
@@ -17,6 +17,9 @@ canvas.height = canvas_height;
 var context = null;
 var test_data_arrays = null;
 
+
+var displayNewData = true;
+
 function setup(){
 	document.body.appendChild(canvas);
 	context = canvas.getContext("2d");
@@ -27,16 +30,19 @@ function setup(){
         console.log('test_data_arrays', test_data_arrays);
         var testing = false;
         if (testing){
-            playSound(test_data_arrays[0]);
             test(0);
+            testSound(0);
         }
     });
 
     socket.on('acc', function(d) {
+        if (!displayNewData){return;}
         updateVisual(d); //[x,y,z]
+        updateSound(d);
     });
 
     socket.on('gps', function(d){
+        if (!displayNewData){return;}
         var ls = d.split(" ");
         newPosition(parseFloat(ls[0]),parseFloat(ls[1]));
     });
@@ -148,36 +154,56 @@ function updateVisual(new_readings){
     }
 }
 
-var playSound = function(data) {
-    var dataIndex = 0;
-    var context = new AudioContext();
-    var dataNoise = context.createScriptProcessor(1024);
-    dataNoise.onaudioprocess = function(e) {
-        var leftIn = e.inputBuffer.getChannelData(0);
-        var rightIn = e.inputBuffer.getChannelData(1);
-        var leftOut = e.outputBuffer.getChannelData(0);
-        var rightOut = e.outputBuffer.getChannelData(1);
-        for (var i = 0; i < leftIn.length; i++) {
-            var shift = i + Math.floor(data[dataIndex] * 50);
-            if (shift < 0) shift = 0;
-            if (shift >= leftIn.length) shift = leftIn.length - 1;
-            leftOut[i] = leftIn[shift];
-            rightOut[i] = rightIn[shift];
+var updateSound = (function() {
+    console.log('initializing sounds');
+    var audioCtx = new AudioContext();
+    var osc1 = audioCtx.createOscillator();
+    osc1.frequency.value = 200;
+    var osc2 = audioCtx.createOscillator();
+    osc2.frequency.value = 200;
+    var gain = audioCtx.createGain();
 
-            dataIndex += 1;
-            if (dataIndex >= data.length) {
-                dataIndex = 0;
-            }
-        }
+    osc1.connect(gain);
+    osc2.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc1.start(0);
+    osc2.start(0);
+
+    gain.gain.setValueAtTime(0.0, audioCtx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.4, audioCtx.currentTime + 5.0);
+
+    /* why does gain crackle? it's not linearly ramping at all!!!
+    function updateGain() {
+        var t = Math.floor(Math.random() * 15);
+        var g = Math.floor(Math.random()*100) / 100 + 0.01;
+        if ( g > 0.9 ) g = 0.9;
+        console.log('g', g, 't', t);
+        gain.gain.linearRampToValueAtTime(g, audioCtx.currentTime + t);
+        setTimeout(updateGain, 1000*t + 9000);
+    }
+    setTimeout(updateGain, 6000);
+    */
+
+    var beatFreq = 20;
+    return function(data) {
+        if (Math.random() < 0.5) return;
+
+        var x = data[0];
+        var y = data[1];
+        var z = data[2];
+        var f1 = Math.abs(x) * 200;
+
+        beatFreq = Math.random() * 5;
+        if (Math.random() > 0.7) beatFreq *= 2;
+        if (Math.random() > 0.85) beatFreq += 10;
+        var f2 = f1 + beatFreq;
+
+        console.log('f1', f1, 'f2', f2);
+        osc1.frequency.linearRampToValueAtTime(f1, audioCtx.currentTime + 3.0);
+        osc2.frequency.linearRampToValueAtTime(f2, audioCtx.currentTime + 3.0);
     };
-    var source = context.createOscillator();
-    var gain = context.createGain();
-    gain.gain.value = 0.3;
-    source.connect(dataNoise);
-    dataNoise.connect(gain);
-    gain.connect(context.destination);
-    source.start(0);
-};
+})();
+
 
 /*********************************************
 * Testing-specific code
@@ -191,3 +217,10 @@ function test(index){
 	setTimeout(function(){test(index+1);},10);
 }
 
+function testSound(index) {
+    var x = test_data_arrays[0][index];
+    var y = test_data_arrays[1][index];
+    var z = test_data_arrays[2][index];
+    updateSound([x,y,z]);
+	setTimeout(function(){testSound(index+1);},3000);
+}

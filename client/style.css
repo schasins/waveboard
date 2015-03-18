@@ -11,3 +11,13 @@ body{
     opacity: 0.95;
     box-shadow: 0px 0px 100px rgb(0, 255, 200);
 }
+
+#getaway {
+	position: absolute;
+	bottom: 20px;
+	right: 20px;
+}
+
+.ui-button,  .ui-button-text .ui-button{  
+font-size: 10px !important; 
+}
