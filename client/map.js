@@ -78,19 +78,21 @@ function addJitter(base,max_jitter){
   return base + mult*Math.random()*max_jitter;
 }
 // road by Soda
-/*
+
 var curr_ideal = [37.8757181,-122.2590485];
 var curr = curr_ideal;
 var lat_adjust = .00002;
 var long_adjust = -.000003;
 var max_jitter = .000008;
-*/
+
 // invention lab
+/*
 var curr_ideal = [37.874747, -122.258651];
 var curr = curr_ideal;
 var lat_adjust = 0;
 var long_adjust = 0;
 var max_jitter = .000001;
+*/
 function testFunc(){
   if (displayNewData){
     newPosition(curr[0],curr[1]);
