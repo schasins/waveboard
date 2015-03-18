@@ -17,6 +17,9 @@ canvas.height = canvas_height;
 var context = null;
 var test_data_arrays = null;
 
+
+var displayNewData = true;
+
 function setup(){
 	document.body.appendChild(canvas);
 	context = canvas.getContext("2d");
@@ -33,10 +36,12 @@ function setup(){
     });
 
     socket.on('acc', function(d) {
+        if (!displayNewData){return;}
         updateVisual(d); //[x,y,z]
     });
 
     socket.on('gps', function(d){
+        if (!displayNewData){return;}
         var ls = d.split(" ");
         newPosition(parseFloat(ls[0]),parseFloat(ls[1]));
     });

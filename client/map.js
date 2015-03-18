@@ -92,11 +92,13 @@ var lat_adjust = 0;
 var long_adjust = 0;
 var max_jitter = .000001;
 function testFunc(){
-  newPosition(curr[0],curr[1]);
-  curr_ideal[0] = curr_ideal[0]+lat_adjust;
-  curr_ideal[1] = curr_ideal[1]+long_adjust;
-  curr[0] = addJitter(curr_ideal[0],max_jitter);
-  curr[1] = addJitter(curr_ideal[1],max_jitter);
+  if (displayNewData){
+    newPosition(curr[0],curr[1]);
+    curr_ideal[0] = curr_ideal[0]+lat_adjust;
+    curr_ideal[1] = curr_ideal[1]+long_adjust;
+    curr[0] = addJitter(curr_ideal[0],max_jitter);
+    curr[1] = addJitter(curr_ideal[1],max_jitter);
+  }
   setTimeout(testFunc,3000);
 }
 
