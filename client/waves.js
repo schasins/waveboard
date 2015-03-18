@@ -24,7 +24,7 @@ function setup(){
 	document.body.appendChild(canvas);
 	context = canvas.getContext("2d");
 
-    var socket = io.connect('http://localhost:8000');
+    var socket = io.connect('http://kaopad.cs.berkeley.edu:1235');
     socket.on('data', function(d) {
         test_data_arrays = d;
         console.log('test_data_arrays', test_data_arrays);
