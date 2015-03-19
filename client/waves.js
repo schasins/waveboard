@@ -122,6 +122,7 @@ var getColorFunc = function() {
 var getColors = [getColorFunc(),getColorFunc(),getColorFunc()];
 
 function updateVisualOneAxis(new_reading, index){
+    console.log('\n');
     var x = canvas_width+1;
     var portion = (new_reading-lowest_reading)/difference;
     var y = canvas_height*portion;
@@ -166,8 +167,12 @@ function updateVisualOneAxis(new_reading, index){
             // which makes winners not have the numbers it needs
             // which throws an error
             // so we check for that here
-            if (winners[0] && winners[0][0] && winners[0][1] &&
-                winners[1] && winners[1][0] && winners[1][1]) {
+            console.log('\n')
+            if (winners[0] && !isNaN(winners[0][0]) && !isNaN(winners[0][1]) &&
+                    isFinite(winners[0][0]) && isFinite(winners[0][1]) &&
+                winners[1] && !isNaN(winners[1][0]) && !isNaN(winners[1][1]) &&
+                    isFinite(winners[0][0]) && isFinite(winners[0][1])
+                ) {
                 context.beginPath();
                 context.moveTo(winners[0][0], winners[0][1]);
                 context.lineTo(winners[1][0], winners[1][1]);
@@ -175,7 +180,9 @@ function updateVisualOneAxis(new_reading, index){
                 context.stroke();
                 console.log('winners are good');
             } else {
-                console.log('skipping weird winners', winners);
+                console.log('x1', x1, 'y1', y1, 'x2', x2, 'y2', y2);
+                console.log('l', l[0], l[1], 'r', r[0], r[1], 't', t[0], t[1], 'b', b[0], b[1]);
+                console.log('skipping weird winners', winners[0], winners[1]);
             }
         }
     }
