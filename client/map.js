@@ -133,7 +133,6 @@ var lat_adjust = 0;
 var long_adjust = 0;
 var max_jitter = .0000005;
 
-
 function testFunc(){
   if (displayNewData){
     newPosition(curr[0],curr[1]);

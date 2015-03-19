@@ -1,5 +1,7 @@
-var highest_reading = 3.2;
-var lowest_reading = -3.2;
+//var highest_reading = 3.2;
+//var lowest_reading = -3.2;
+var highest_reading = 15.0;
+var lowest_reading = -15.0;
 var difference = highest_reading - lowest_reading;
 
 var most_recent_min = lowest_reading;
@@ -25,6 +27,7 @@ function setup(){
 	context = canvas.getContext("2d");
 
     var socket = io.connect('http://kaopad.cs.berkeley.edu:1235');
+    //var socket = io.connect('http://localhost:1235');
     socket.on('data', function(d) {
         test_data_arrays = d;
         console.log('test_data_arrays', test_data_arrays);
@@ -79,6 +82,12 @@ $(setup);
 function intersection(x1,y1,x2,y2,x3,y3,x4,y4){
 	var x = ((x1*y2-y1*x2)*(x3-x4) - (x1-x2)*(x3*y4-y3*x4)) / ((x1-x2)*(y3-y4) - (y1-y2)*(x3-x4));
 	var y = ((x1*y2-y1*x2)*(y3-y4) - (y1-y2)*(x3*y4-y3*x4)) / ((x1-x2)*(y3-y4) - (y1-y2)*(x3-x4));
+    if ( isNaN(x) ) x = 0;
+    if ( x === -Infinity ) x = 0;
+    if ( x === Infinity ) x = canvas_width;
+    if ( isNaN(y) ) y = 0;
+    if ( y === -Infinity ) y = canvas_height;
+    if ( y === Infinity ) y = 0;
 	return [x,y];
 }
 
@@ -162,11 +171,26 @@ function updateVisualOneAxis(new_reading, index){
                     winners.push(edges[j])
                 }
             }
-            context.beginPath();
-            context.moveTo(winners[0][0], winners[0][1]);
-            context.lineTo(winners[1][0], winners[1][1]);
-            context.strokeStyle = getColors[index]();
-            context.stroke();
+            // sometimes edges ends up having NaN and Infinity values
+            // which makes winners not have the numbers it needs
+            // which throws an error
+            // so we check for that here
+            if (winners[0] && !isNaN(winners[0][0]) && !isNaN(winners[0][1]) &&
+                    isFinite(winners[0][0]) && isFinite(winners[0][1]) &&
+                winners[1] && !isNaN(winners[1][0]) && !isNaN(winners[1][1]) &&
+                    isFinite(winners[0][0]) && isFinite(winners[0][1])
+                ) {
+                context.beginPath();
+                context.moveTo(winners[0][0], winners[0][1]);
+                context.lineTo(winners[1][0], winners[1][1]);
+                context.strokeStyle = getColors[index]();
+                context.stroke();
+            } else {
+                console.log('\n');
+                console.log('x1', x1, 'y1', y1, 'x2', x2, 'y2', y2);
+                console.log('l', l[0], l[1], 'r', r[0], r[1], 't', t[0], t[1], 'b', b[0], b[1]);
+                console.log('skipping weird winners', winners[0], winners[1]);
+            }
         }
     }
     current_points[index] = new_current_axis_points;

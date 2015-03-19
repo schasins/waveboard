@@ -6,6 +6,8 @@ var bodyParser = require('body-parser');
 
 var BROADCAST = true; // when true send data to client
 
+// using old accelerometer data from something else
+/*
 var processFile = function(err, test_data) {
     if (err) {
         return console.log(err);
@@ -25,11 +27,39 @@ var processFile = function(err, test_data) {
     test_data_arrays.push(tmp);
 }
 
-// loading fake data
 var test_data_arrays = [];
 fs.readFile('server/total_acc_x_truncated.txt', 'utf8', processFile);
 fs.readFile('server/total_acc_y_truncated.txt', 'utf8', processFile);
 fs.readFile('server/total_acc_z_truncated.txt', 'utf8', processFile);
+*/
+
+// using accelerometer data from our waveboard
+var test_data_arrays = [[], [], []];
+fs.readFile('server/acc_old_log.csv', 'utf8', function(err, text) {
+    if (err) {
+        return console.log(err);
+    }
+    var lines = text.split("\n");
+    for (var i = 0; i < lines.length; i++) {
+        var xyz_strings = lines[i].split(',');
+        var xyz_numbers = [];
+        var numbers_all_good = true;
+        for (var j = 0; j < 3; j++) {
+            var a = parseFloat(xyz_strings[j]);
+            xyz_numbers.push(a);
+            if (isNaN(a) || !isFinite(a)) {
+                numbers_all_good = false;
+            }
+        }
+        if (numbers_all_good) {
+            test_data_arrays[0].push(xyz_numbers[0]);
+            test_data_arrays[1].push(xyz_numbers[1]);
+            test_data_arrays[2].push(xyz_numbers[2]);
+        } else {
+            console.log('skipping bad data', xyz_numbers);
+        }
+    }
+});
 
 // SERVERS
 var express_app = express();
