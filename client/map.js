@@ -58,6 +58,33 @@ function newPosition(lat,long) {
   }
 }
 
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function distanceTraveledFeedback(){
+  if (mostRecentPositions.length > 0){
+    var distance = 0;
+    for (var i = 1; i< mostRecentPositions.length; i++){
+      distance += Math.abs(mostRecentPositions[i][0]-mostRecentPositions[i-1][0]);
+      distance += Math.abs(mostRecentPositions[i][1]-mostRecentPositions[i-1][1]);
+    }
+    //console.log("distance: ",distance);
+    var messages = ["I'm bored.", "I'm bored.  Come find me.", "This isn't fun anymore.", "This place is getting old."];
+    if (distance > 0.00005){
+      var messages = ["Wheeeeee!", "This is awesome!!!", "Yayayay fun!!", ":)"];
+    }
+    var index = getRandomInt(0,messages.length);
+    $("#distance_feedback").html(messages[index]);
+    $("#distance_feedback").css("bottom", $(window).height()/2+15);
+    $("#distance_feedback").css("left", $(window).width()/2+15);
+    $("#distance_feedback").fadeTo(200,.75);
+    setTimeout(function(){$("#distance_feedback").fadeTo(200,0);},5000);
+  }
+  setTimeout(distanceTraveledFeedback,15000);
+}
+setTimeout(distanceTraveledFeedback,15000);
+
 var testFuncCounter = 0;
 var latlngs = [[37.8757181,-122.2590485],[37.8757251,-122.2591496],[37.8757051,-122.2592507],[37.8757101,-122.2593518],[37.8757191,-122.2594529],[37.8757151,-122.2595530],[37.8757251,-122.2596541],[37.8757051,-122.2597552],[37.8757201,-122.2598552],[37.8757251,-122.2599552],[37.8757351,-122.2600552],[37.8757451,-122.2601552],[37.8757551,-122.2602552]];
 
@@ -78,21 +105,35 @@ function addJitter(base,max_jitter){
   return base + mult*Math.random()*max_jitter;
 }
 // road by Soda
-
+/*
 var curr_ideal = [37.8757181,-122.2590485];
 var curr = curr_ideal;
 var lat_adjust = .00002;
 var long_adjust = -.000003;
 var max_jitter = .000008;
+*/
+
+//setTimeout(function(){test(0);},6000);
+
+
+//Soda
+/*
+var curr_ideal = [37.8757181,-122.2587485];
+var curr = curr_ideal;
+var lat_adjust = 0;
+var long_adjust = 0;
+var max_jitter = .000002;
+*/
 
 // invention lab
-/*
+
 var curr_ideal = [37.874747, -122.258651];
 var curr = curr_ideal;
 var lat_adjust = 0;
 var long_adjust = 0;
-var max_jitter = .000001;
-*/
+var max_jitter = .0000005;
+
+
 function testFunc(){
   if (displayNewData){
     newPosition(curr[0],curr[1]);

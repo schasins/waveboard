@@ -48,12 +48,13 @@ function setup(){
     });
 
     socket.on('timeSinceReset', function(d){
-        console.log(d);
         var minutes = Math.floor(d/60000);
+        console.log(minutes);
         var current_time = $("#current_time");
         current_time.css("display","block");
         var current_time_box = $("#current_time_box");
         var current_time_units = $("#current_time_units");
+        var current_time_comments = $("#current_time_comments");
         if (minutes > 60){
             current_time_box.html(Math.floor(minutes/60));
             current_time_units.html("hours");
@@ -62,14 +63,14 @@ function setup(){
             current_time_box.html(minutes);
             current_time_units.html("minutes");
         }
-        if (minutes > 30 && minutes <= 90){
-            current_time.append($("<span></br>Getting kinda clingy...</span>"));
+        if (minutes > 30 && minutes < 90){
+            current_time_comments.html("Getting kinda clingy...");
         }
-        else if (minutes > 90 && minutes <= 180){
-            current_time.append($("<span></br>Ok, seriously.  Getting very clingy.</span>"));
+        else if (minutes >= 90 && minutes <= 180){
+            current_time_comments.html("Ok, seriously.  Getting very clingy.");
         }
-        else if (minutes > 180){
-            current_time.append($("<span></br>This is too long.  I need to see other people.</span>"));
+        else if (minutes >= 180){
+            current_time_comments.html("I need to see other people.");
         }
     });
 }
@@ -84,7 +85,7 @@ function intersection(x1,y1,x2,y2,x3,y3,x4,y4){
 var getColorFunc = function() {
     // TODO do something with data here
 
-    var r = 0, g = 227, b = 245, a = 1.0;
+    var r = 0, g = 227, b = 245, a = .3;
     var target_r = r, target_g = g, target_b = b, target_a = a;
     var rate = 10;
     var rgba = set_rgba();
@@ -99,7 +100,7 @@ var getColorFunc = function() {
         rgba = 'rgba(' + 0 + ','
                        + Math.floor(g) + ','
                        + Math.floor(b) + ','
-                       + a + ')';
+                       + 0.3 + ')';
     }
 
     setInterval(function() {
