@@ -24,11 +24,12 @@ function setup(){
 	document.body.appendChild(canvas);
 	context = canvas.getContext("2d");
 
-    var socket = io.connect('http://kaopad.cs.berkeley.edu:1235');
+    //var socket = io.connect('http://kaopad.cs.berkeley.edu:1235');
+    var socket = io.connect('http://localhost:1235');
     socket.on('data', function(d) {
         test_data_arrays = d;
         console.log('test_data_arrays', test_data_arrays);
-        var testing = false;
+        var testing = true;
         if (testing){
             test(0);
             testSound(0);
@@ -161,11 +162,21 @@ function updateVisualOneAxis(new_reading, index){
                     winners.push(edges[j])
                 }
             }
-            context.beginPath();
-            context.moveTo(winners[0][0], winners[0][1]);
-            context.lineTo(winners[1][0], winners[1][1]);
-            context.strokeStyle = getColors[index]();
-            context.stroke();
+            // sometimes edges ends up having NaN and Infinity values
+            // which makes winners not have the numbers it needs
+            // which throws an error
+            // so we check for that here
+            if (winners[0] && winners[0][0] && winners[0][1] &&
+                winners[1] && winners[1][0] && winners[1][1]) {
+                context.beginPath();
+                context.moveTo(winners[0][0], winners[0][1]);
+                context.lineTo(winners[1][0], winners[1][1]);
+                context.strokeStyle = getColors[index]();
+                context.stroke();
+                console.log('winners are good');
+            } else {
+                console.log('skipping weird winners', winners);
+            }
         }
     }
     current_points[index] = new_current_axis_points;
