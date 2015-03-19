@@ -237,19 +237,18 @@ var updateSound = (function() {
 
     var beatFreq = 20;
     return function(data) {
-        if (Math.random() < 0.5) return;
+        //if (Math.random() < 0.5) return;
 
         var x = data[0];
         var y = data[1];
         var z = data[2];
-        var f1 = Math.abs(x) * 200;
+        var f1 = Math.abs((x + y + z)/3) * 400 + 25;
 
         beatFreq = Math.random() * 5;
         if (Math.random() > 0.7) beatFreq *= 2;
         if (Math.random() > 0.85) beatFreq += 10;
         var f2 = f1 + beatFreq;
 
-        //console.log('f1', f1, 'f2', f2);
         osc1.frequency.linearRampToValueAtTime(f1, audioCtx.currentTime + 3.0);
         osc2.frequency.linearRampToValueAtTime(f2, audioCtx.currentTime + 3.0);
     };
