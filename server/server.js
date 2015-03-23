@@ -70,7 +70,8 @@ console.log("Serving: ",p);
 express_app.use(express.static(p));
 
 // starts the static file server and post requests handler
-var express_server = express_app.listen(1235);
+// TODO: choose server location
+var express_server = express_app.listen(8000);
 
 // socketio server to stream data to the client
 var socketio_server = socketio.listen(express_server);

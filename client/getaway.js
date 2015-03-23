@@ -12,7 +12,7 @@ function processForm(){
 	setTimeout(function(){displayNewData = true;},180000); //3 minutes
 	$.ajax({
 		type: "POST",
-		url: "http://kaopad.cs.berkeley.edu:1235/caught",
+		    url: "http://localhost:8000/caught", //TODO: choose server location
 		data: "",
 		success: function(){console.log("Successful post.");}
 	});
