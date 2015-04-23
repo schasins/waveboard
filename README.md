@@ -1,6 +1,8 @@
 # waveboard
 Exploring interactions that augment the waveboard experience.
 
+Get all the details here: http://www.hackster.io/4266/jack
+
 To try it out:
 
 Install nodejs and npm
